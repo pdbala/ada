@@ -1,69 +1,99 @@
-#include <iostream>
-#include<omp.h>
-
+// C++ program to implement the Quick Sort
+// using OMI
+#include <bits/stdc++.h>
+#include <omp.h>
 using namespace std;
 
-
-void swap(int *a, int *b)
+// Function to swap two numbers a and b
+void swap(int* a, int* b)
 {
-    int t=*a;
-    *a=*b;
-    *b=t;
+	int t = *a;
+	*a = *b;
+	*b = t;
 }
 
-int partition(int arr[],int start,int end)
+// Function to perform the partitioning
+// of array arr[]
+int partition(int arr[], int start, int end)
 {
-    int pivot =arr[end];
-    int i=start-1;
-    for (int j=start;j<end;j++)
-    {
-        if (arr[j]<pivot)
-        {
-            i++;
-            swap(&arr[i],&arr[j]);
-        }
-    }
-    swap(&arr[i + 1], &arr[end]);
-    return i+1;
+	// Declaration
+	int pivot = arr[end];
+	int i = (start - 1);
+
+	// Rearranging the array
+	for (int j = start; j <= end - 1; j++) {
+		if (arr[j] < pivot) {
+			i++;
+			swap(&arr[i], &arr[j]);
+		}
+	}
+	swap(&arr[i + 1], &arr[end]);
+
+	// Returning the respective index
+	return (i + 1);
 }
 
-void quicksort(int arr[],int start,int end)
+// Function to perform QuickSort Algorithm
+// using openmp
+void quicksort(int arr[], int start, int end)
 {
-    int index;
-    if(start<end)
-    {
-        index = partition(arr,start,end);
-        #pragma omp parallel sections
-        {
-            #pragma omp section
-            {
-                quicksort(arr,start,index-1);
-            }
-            #pragma omp section
-            {
-                quicksort(arr,index+1,start);
-            }
-        }
-    }
+	// Declaration
+	int index;
+
+	if (start < end) {
+
+		// Getting the index of pivot
+		// by partitioning
+		index = partition(arr, start, end);
+
+// Parallel sections
+#pragma omp parallel sections
+		{
+#pragma omp section
+			{
+				// Evaluating the left half
+				quicksort(arr, start, index - 1);
+			}
+#pragma omp section
+			{
+				// Evaluating the right half
+				quicksort(arr, index + 1, end);
+			}
+		}
+	}
 }
 
-
+// Driver Code
 int main()
 {
-    int n;
-    cout<<"Enter Number of elements:";
-    cin>>n;
-    cout<<"Enter "<<n<<" elements:\n";
-    int arr[n];
-    for(int i=0;i<n;i++)
-    {
-        cin>>arr[i];
-    }
-    quicksort(arr,0,n-1);
-    cout<<"Sorted array:\n";
-    for(int i=0;i<n;i++)
-    {
-        cout<<arr[i]<<" ";
-    }
-    return 0;
+	// Declaration
+	int N;
+
+	// Taking input the number of
+	// elements we wants
+	cout << "Enter the number of elements"
+		<< " you want to Enter\n";
+	cin >> N;
+
+	// Declaration of array
+	int arr[N];
+
+	cout << "Enter the array: \n";
+	// Taking input that array
+	for (int i = 0; i < N; i++) {
+		cin >> arr[i];
+	}
+
+	// Calling quicksort having parallel
+	// code implementation
+	quicksort(arr, 0, N - 1);
+
+	// Printing the sorted array
+	cout << "Array after Sorting is: \n";
+
+	for (int i = 0; i < N; i++) {
+		cout << arr[i] << " ";
+	}
+
+	return 0;
 }
